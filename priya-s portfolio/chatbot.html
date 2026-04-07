@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Chatbot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <style>
+        /* Chatbot Styles */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 9999;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .chatbot-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chatbot-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .chatbot-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 380px;
+            height: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 50px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .chatbot-window.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .chatbot-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .chatbot-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .chatbot-header p {
+            margin: 5px 0 0 0;
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .chatbot-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        .chatbot-close:hover {
+            opacity: 1;
+        }
+
+        .chatbot-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .message.user {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .message.bot .message-avatar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .message.user .message-avatar {
+            background: #6c757d;
+        }
+
+        .message-content {
+            background: white;
+            padding: 12px 16px;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.4;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+.chatbot-input-container {
+    padding: 15px;
+    background: white;
+    border-top: 1px solid #e9ecef;
+    position: relative;
+}
+
+.chatbot-input {
+    width: 100%;
+    padding: 12px 45px 12px 16px; /* space for send icon */
+    border: 1px solid #dee2e6;
+    border-radius: 25px;
+    font-size: 14px;
+    outline: none;
+    box-sizing: border-box;
+}
+
+        .chatbot-input:focus {
+            border-color: #667eea;
+        }
+
+      .chatbot-send {
+    position: absolute;
+    right: 25px;
+    bottom: 22px;
+    background: none;
+    border: none;
+    color: #667eea;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+        .chatbot-send:hover {
+            color: #764ba2;
+        }
+
+        .quick-questions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .quick-question {
+            background: #e9ecef;
+            border: 1px solid #dee2e6;
+            border-radius: 15px;
+            padding: 6px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quick-question:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 5px;
+            padding: 10px 0;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            background: #667eea;
+            border-radius: 50%;
+            animation: typingDot 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingDot {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Dark theme support */
+        [data-theme="dark"] .chatbot-window {
+            background: #1e1e1e;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] .chatbot-messages {
+            background: #2a2a2a;
+        }
+
+        [data-theme="dark"] .message-content {
+            background: #333;
+            color: #e0e0e0;
+        }
+
+        [data-theme="dark"] .message.user .message-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        [data-theme="dark"] .chatbot-input-container {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+
+        [data-theme="dark"] .chatbot-input {
+            background: #333;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        [data-theme="dark"] .quick-question {
+            background: #333;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .chatbot-window {
+                width: calc(100vw - 40px);
+                height: 70vh;
+                bottom: 80px;
+                right: 20px;
+                left:-278px;
+            }
+        }
+    </style>
+
+    <div class="chatbot-container">
+        <button class="chatbot-toggle" id="chatbot-toggle">
+            <i class="fas fa-comments"></i>
+        </button>
+        
+        <div class="chatbot-window" id="chatbot-window">
+            <div class="chatbot-header">
+                <button class="chatbot-close" id="chatbot-close">
+                    <i class="fas fa-times"></i>
+                </button>
+               <h3>Ask Me Anything</h3>
+<p>Ask about my experience, skills and projects</p>
+            </div>
+            
+            <div class="chatbot-messages" id="chatbot-messages">
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="message-content">
+                        Hi! I'm Priya 👋  
+You can ask me about my experience, skills, or projects.
+                        <div class="quick-questions">
+                            <div class="quick-question" data-question="What is your experience?">Experience</div>
+                            <div class="quick-question" data-question="What are your skills?">Skills</div>
+                            <div class="quick-question" data-question="Tell me about your projects">Projects</div>
+                            <div class="quick-question" data-question="What is your education?">Education</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="typing-indicator" id="typing-indicator">
+                <div class="message bot">
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-dots">
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                        <div class="typing-dot"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chatbot-input-container">
+                <input type="text" class="chatbot-input" id="chatbot-input" placeholder="Ask me about my projects, skills..">
+                <button class="chatbot-send" id="chatbot-send">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+  <script>
+class CVChatbot {
+    constructor() {
+        this.isOpen = false;
+        this.messagesContainer = document.getElementById('chatbot-messages');
+        this.input = document.getElementById('chatbot-input');
+        this.typingIndicator = document.getElementById('typing-indicator');
+        
+        this.cvData = {
+            name: "Priya Pradhan",
+            title: "React Developer",
+            experience: "3+ years of experience in React development",
+            currentJob: "Currently working at Odisha Television Ltd. since December 2022",
+
+            skills: {
+                frontend: ["React.js", "Next.js", "TypeScript", "JavaScript", "HTML5", "CSS3"],
+                styling: ["Tailwind CSS", "Responsive Design", "CSS Grid", "Flexbox"],
+                tools: ["Redux", "REST APIs", "GitHub", "Performance Optimization"]
+            },
+
+            education: "Bachelor of Technology from ABIT, Cuttack",
+
+            projects: [
+                {
+                    name: "OTV Stringer Input-Output App",
+                    description: "Internal application for streamlining workflows for stringer teams with real-time field reporting capabilities",
+                    tech: ["Next.js", "TypeScript", "Tailwind CSS"]
+                },
+                {
+                    name: "OTV Insight – Voting Platform",
+                    description: "Participant voting platform with real-time voting, admin dashboard, participant management and vote tracking. Developed both frontend and dashboard.",
+                    tech: ["React", "Vite", "Tailwind CSS", "REST API"]
+                },
+                {
+                    name: "OdishaTelevision Website",
+                    description: "Dynamic news website with nested routing, breaking news updates, and mobile-first responsive design",
+                    tech: ["React", "React Router", "Tailwind CSS"]
+                },
+                {
+                    name: "WhatsApp Ordering App",
+                    description: "Jewellery ordering interface with WhatsApp conversation UI and pre-filled message generation for orders",
+                    tech: ["React", "Context API", "Tailwind CSS"]
+                },
+                {
+                    name: "Netflix Clone",
+                    description: "Landing page replica with sleek design and easy navigation",
+                    tech: ["HTML", "CSS", "JavaScript"]
+                }
+            ],
+
+            contact: {
+                email: "priyapradhan437@gmail.com",
+                whatsapp: "7077817064",
+                linkedin: "https://linkedin.com/in/priyapradhan437",
+                github: "https://github.com/priy437pradhan",
+                portfolio: "https://portfolio-nine-neon-88.vercel.app"
+            }
+        };
+
+        this.init();
+    }
+
+    init() {
+        const toggle = document.getElementById('chatbot-toggle');
+        const close = document.getElementById('chatbot-close');
+        const send = document.getElementById('chatbot-send');
+
+        toggle.addEventListener('click', () => this.toggleChat());
+        close.addEventListener('click', () => this.closeChat());
+        send.addEventListener('click', () => this.sendMessage());
+
+        this.input.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.sendMessage();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('quick-question')) {
+                const question = e.target.getAttribute('data-question');
+                this.handleUserMessage(question);
+            }
+        });
+    }
+
+    toggleChat() {
+        const window = document.getElementById('chatbot-window');
+        this.isOpen = !this.isOpen;
+        window.classList.toggle('active', this.isOpen);
+    }
+
+    closeChat() {
+        const window = document.getElementById('chatbot-window');
+        this.isOpen = false;
+        window.classList.remove('active');
+    }
+
+    sendMessage() {
+        const message = this.input.value.trim();
+        if (!message) return;
+
+        this.addMessage(message, 'user');
+        this.input.value = '';
+        this.handleUserMessage(message);
+    }
+
+    addMessage(content, type) {
+        const messageDiv = document.createElement('div');
+        messageDiv.className = `message ${type}`;
+        
+        const avatar = document.createElement('div');
+        avatar.className = 'message-avatar';
+        avatar.innerHTML = type === 'bot'
+            ? '<i class="fas fa-robot"></i>'
+            : '<i class="fas fa-user"></i>';
+        
+        const messageContent = document.createElement('div');
+        messageContent.className = 'message-content';
+        messageContent.innerHTML = content;
+        
+        messageDiv.appendChild(avatar);
+        messageDiv.appendChild(messageContent);
+        this.messagesContainer.appendChild(messageDiv);
+
+        this.scrollToBottom();
+    }
+
+    showTyping() {
+        this.typingIndicator.style.display = 'flex';
+        this.scrollToBottom();
+    }
+
+    hideTyping() {
+        this.typingIndicator.style.display = 'none';
+    }
+
+    scrollToBottom() {
+        this.messagesContainer.scrollTop =
+            this.messagesContainer.scrollHeight;
+    }
+
+    handleUserMessage(message) {
+        this.showTyping();
+
+        setTimeout(() => {
+            this.hideTyping();
+            const response = this.generateResponse(message);
+            this.addMessage(response, 'bot');
+        }, 700);
+    }
+
+    generateResponse(message) {
+        const msg = message.toLowerCase();
+
+        // experience
+        if (msg.includes('experience')) {
+            return `I have 3+ years of experience as a React Developer. She is currently working at Odisha Television Ltd building large scale news platforms, dashboards and internal tools using React, Next.js and Tailwind CSS.`;
+        }
+
+        // skills
+        if (msg.includes('skill') || msg.includes('technology')) {
+            return `
+            <strong>Frontend:</strong> ${this.cvData.skills.frontend.join(', ')}<br>
+            <strong>Styling:</strong> ${this.cvData.skills.styling.join(', ')}<br>
+            <strong>Tools:</strong> ${this.cvData.skills.tools.join(', ')}
+            `;
+        }
+
+        // OTV Insight
+        if (msg.includes('insight') || msg.includes('voting')) {
+            return `OTV Insight is a participant voting platform where users vote in real time. I developed complete frontend and admin dashboard including participant management, vote tracking and responsive UI using React, Vite and Tailwind CSS.`;
+        }
+
+        // Stringer
+        if (msg.includes('stringer')) {
+            return `OTV Stringer Input Output App is an internal workflow application for field reporters with real-time reporting and data management built using Next.js and TypeScript.`;
+        }
+
+        // news website
+        if (msg.includes('news') || msg.includes('odisha')) {
+            return `OdishaTelevision website is a dynamic news platform with nested routing, breaking news updates and mobile-first responsive design built using React and Tailwind CSS.`;
+        }
+
+        // whatsapp app
+        if (msg.includes('whatsapp')) {
+            return `WhatsApp Ordering App is a jewellery ordering interface with WhatsApp chat UI and pre-filled message generation built using React and Tailwind CSS.`;
+        }
+
+        // netflix
+        if (msg.includes('netflix')) {
+            return `Netflix clone is a UI replica built using HTML, CSS and JavaScript to showcase frontend design skills.`;
+        }
+
+        // ALL PROJECTS
+        if (msg.includes('project') || msg.includes('portfolio')) {
+            let text = "<strong>Priya's Projects:</strong><br><br>";
+
+            this.cvData.projects.forEach(p => {
+                text += `<strong>${p.name}</strong><br>`;
+                text += `${p.description}<br>`;
+                text += `<em>Tech: ${p.tech.join(', ')}</em><br><br>`;
+            });
+
+            return text;
+        }
+
+        // contact
+        if (msg.includes('contact') || msg.includes('hire')) {
+            return `
+            Email: ${this.cvData.contact.email}<br>
+            WhatsApp: +91 ${this.cvData.contact.whatsapp}<br>
+            LinkedIn: <a href="${this.cvData.contact.linkedin}" target="_blank">Profile</a><br>
+            Portfolio: <a href="${this.cvData.contact.portfolio}" target="_blank">Website</a>
+            `;
+        }
+
+        // greeting
+        if (msg.includes('hi') || msg.includes('hello')) {
+            return "Hi! You can ask me about my experience, skills, or projects.";
+        }
+
+        return `
+        You can ask me about:<br>
+        • Projects<br>
+        • Experience<br>
+        • Skills<br>
+        • Contact<br>
+        • OTV Insight<br>
+        • News Website
+        `;
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    new CVChatbot();
+});
+</script> 
+</body>
+</html>

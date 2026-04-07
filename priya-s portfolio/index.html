@@ -603,7 +603,19 @@
             color: white;
             text-decoration: none;
         }
+.profile-pic {
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 5px solid var(--primary-color);
+}
 
+.profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
         /* Animations */
         @keyframes fadeInUp {
             from {
@@ -726,23 +738,30 @@
     <!-- Hero Section -->
     <section id="home" class="hero">
         <div class="hero-container">
-            <div class="hero-content">
-                <h1>Priya Pradhan</h1>
-                <p class="subtitle">React Developer</p>
-                <p>Innovative React Developer with <strong>3 years</strong> of expertise in building high-performance web applications. Proven track record in optimizing load times and enhancing user engagement through advanced performance techniques.</p>
-                <div class="hero-buttons">
-                    <a href="#contact" class="btn btn-primary">
-                        <i class="fas fa-envelope"></i> Hire Me
-                    </a>
-                    <a href="https://wa.me/7077817064?text=Hey" class="btn btn-secondary" target="_blank">
-                        <i class="fab fa-whatsapp"></i> Chat with Me
-                    </a>
-                </div>
-            </div>
+        <div class="hero-content">
+    <h1>Priya Pradhan</h1>
+
+    <p class="subtitle">React Developer | Aspiring Backend Developer</p>
+
+    <p>
+        React Developer with <strong>3+ years</strong> of experience building 
+        high-performance and scalable web applications. I specialize in modern 
+        React ecosystems, responsive UI, and performance optimization, and I'm 
+        currently expanding my backend skills to become a full-stack developer.
+    </p>
+
+    <div class="hero-buttons">
+       
+
+        <a href="https://wa.me/7077817064?text=Hi%20Priya" class="btn btn-secondary" target="_blank">
+            <i class="fab fa-whatsapp"></i> Chat with Me
+        </a>
+    </div>
+</div>
             <div class="hero-image">
-                <div class="profile-pic" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); display: flex; align-items: center; justify-content: center; color: white; font-size: 4rem;">
-                    <i class="fas fa-user"></i>
-                </div>
+                <div class="profile-pic">
+    <img src="../src/assets/priya.jpeg" alt="Priya Pradhan">
+</div>
                 <div class="social-links">
                     <a href="https://linkedin.com/in/priyapradhan437" target="_blank">
                         <i class="fab fa-linkedin-in"></i>
@@ -750,12 +769,8 @@
                     <a href="https://github.com/priy437pradhan" target="_blank">
                         <i class="fab fa-github"></i>
                     </a>
-                    <a href="https://portfolio-nine-neon-88.vercel.app" target="_blank">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                    <a href="mailto:priyapradhan437@gmail.com">
-                        <i class="fas fa-envelope"></i>
-                    </a>
+                   
+     
                 </div>
             </div>
         </div>
@@ -803,6 +818,8 @@
                         <span class="skill-tag">JavaScript (ES6+)</span>
                         <span class="skill-tag">HTML5</span>
                         <span class="skill-tag">CSS3</span>
+                        <span class="skill-tag">REST APIs</span>
+                         <span class="skill-tag">Node.js</span>
                     </div>
                 </div>
                 <div class="skill-category">
@@ -818,9 +835,9 @@
                     <h3><i class="fas fa-tools"></i> Tools & Others</h3>
                     <div class="skill-tags">
                         <span class="skill-tag">Redux</span>
-                        <span class="skill-tag">REST APIs</span>
+                        
                         <span class="skill-tag">GitHub</span>
-                        <span class="skill-tag">Performance Optimization</span>
+                    
                     </div>
                 </div>
             </div>
@@ -866,8 +883,32 @@
                             <span class="tech-tag">TypeScript</span>
                             <span class="tech-tag">Tailwind CSS</span>
                         </div>
+                        <div class="project-links">
+                            <a href="https://superapp-test.odishatv.in/" class="btn-primary" target="_blank">Live Demo</a>
+                        </div>
                     </div>
                 </div>
+                <div class="project-card">
+    <div class="project-image">   
+        <i class="fas fa-vote-yea"></i>
+    </div>
+    <div class="project-content">
+        <h3>OTV Insight – Voting Platform</h3>
+        <p>Developed complete frontend and admin dashboard for a participant voting platform where users can vote in real-time. Implemented participant management, vote tracking, filtering, and responsive UI for seamless user experience.</p>
+        
+        <div class="project-tech">
+            <span class="tech-tag">React</span>
+            <span class="tech-tag">Vite</span>
+            <span class="tech-tag">Tailwind CSS</span>
+            <span class="tech-tag">REST API</span>
+            <span class="tech-tag">Dashboard</span>
+        </div>
+
+        <div class="project-links">
+            <a href="https://otvinsight.com/" class="btn-primary" target="_blank">Live Demo</a>
+        </div>
+    </div>
+</div>
 
                 <div class="project-card">
                     <div class="project-image">
@@ -887,7 +928,7 @@
                     </div>
                 </div>
 
-                <div class="project-card">
+                <!-- <div class="project-card">
                     <div class="project-image">
                         <i class="fas fa-cogs"></i>
                     </div>
@@ -900,7 +941,7 @@
                             <span class="tech-tag">REST APIs</span>
                         </div>
                     </div>
-                </div>
+                </div> -->
 
                 <div class="project-card">
                     <div class="project-image">
@@ -938,7 +979,7 @@
             </div>  
         </div>
     </section>
-    // Add this script before the closing </body> tag
+   
 
 <script>
     // Dark mode toggle functionality
@@ -1070,6 +1111,6 @@
         observer.observe(section);
     });
 </script>
-<script src="chatbot.html"></script>
+
 </body>
 </html>  
